@@ -1,8 +1,7 @@
 from aiogram.utils import executor
 from create_bot import dp
-from handler import client, admin, other,statistic
+from handler import client, admin, other, statistic
 import logging
-
 
 
 async def on_startup(_):

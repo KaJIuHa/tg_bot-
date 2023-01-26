@@ -34,7 +34,7 @@ choise_2 = InlineKeyboardMarkup(row_width=2).row(in_kb_yes, in_kb_no)
 in_kb_add_exp = InlineKeyboardButton('📉 Добавить расход', callback_data='add_expansis')
 in_kb_add = InlineKeyboardButton('📈 Добавить поступление', callback_data='add_income')
 in_kb_stat = InlineKeyboardButton('🧮 Статитстика', callback_data='statistics')
-choise_add = InlineKeyboardMarkup().row(in_kb_add,in_kb_add_exp).add(in_kb_stat)
+choise_add = InlineKeyboardMarkup().row(in_kb_add, in_kb_add_exp).add(in_kb_stat)
 
 in_kb_stat_one = InlineKeyboardButton("📉 Расходы по одной категрии", callback_data='statistics_one')
 in_kb_stat_all = InlineKeyboardButton('📊 Расходы по всем категориям', callback_data='statistics_all')

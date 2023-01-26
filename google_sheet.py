@@ -13,30 +13,58 @@ async def db_start():
     db = sq.connect('finance.db')
     cur = db.cursor()
 
-    cur.execute('CREATE TABLE IF NOT EXISTS expanses (id INTEGER,user_name TEXT, date TEXT, category TEXT, value INTEGER)')
-    cur.execute('CREATE TABLE IN NOT EXISTS financial (id INTEGER,user_name TEXT, date TEXT, category TEXT, value INTEGER)')
+    cur.execute(
+        """CREATE TABLE IF NOT EXISTS expanses (
+                id INTEGER,
+                user_name TEXT, 
+                date TEXT, 
+                category TEXT, 
+                value INTEGER)"""
+    )
+    cur.execute(
+        """CREATE TABLE IN NOT EXISTS financial (
+                id INTEGER,
+                user_name TEXT,
+                date TEXT,
+                category TEXT,
+                value INTEGER)"""
+    )
     db.commit()
 
 
 async def create_value(state):
-    "Добавляем значения в БД"
+    """Добавляем значения в БД"""
     async with state.proxy() as data:
-        cur.execute("INSERT INTO expanses VALUES(?, ?, ?, ?, ?)",
-                    (data['id'], data['name'], data['date'], data['category'], data['value']))
+        cur.execute(
+            "INSERT INTO expanses VALUES(?, ?, ?, ?, ?)",
+            (
+                data['id'],
+                data['name'],
+                data['date'],
+                data['category'],
+                data['value'])
+        )
         db.commit()
 
 
 async def get_today(message):
-    "Получаем траты за сегоднешний день"
+    """Получаем траты за сегоднешний день"""
     result = f"<b>Ваши траты за сегодня:</b>\n"
-    for ret in cur.execute("""SELECT category, sum(value) from finance 
-    where strftime('%d', datetime('now')) = strftime('%d', date) 
-    group by category
-    order by sum(value)""").fetchall():
+
+    for ret in cur.execute(
+            """SELECT category, SUM(value) 
+            FROM finance 
+            WHERE strftime('%d', DATETIME('now')) = strftime('%d', date)
+            GROUP BY category
+            ORDER BY SUM(value)"""
+    ).fetchall():
         result += '\n'
         result += f'{ret[0]} - {ret[1]} руб.\n'
-    total = cur.execute("""SELECT sum(value) from finance 
-    where strftime('%d', datetime('now')) = strftime('%d', date)""").fetchall()
+
+    total = cur.execute(
+        """SELECT sum(value) FROM finance
+        WHERE strftime('%d', DATETIME('now')) = strftime('%d', date)"""
+    ).fetchall()
     result += '__________________________________\n'
     result += f'<b>Общий итог:</b> {total[0][0]} руб'
     await bot.send_message(message.from_user.id, text=result, parse_mode='html')
